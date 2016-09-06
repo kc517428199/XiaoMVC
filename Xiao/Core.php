@@ -4,7 +4,8 @@
     class Core {
 //    require_once ('../vendor/xiaokc/xiaomvc/Xiao/Dispatcher.php');
 
-        static public function start(){
+        static public function start()
+        {
             // 注册AUTOLOAD方法
             spl_autoload_register('Xiao\Core::autoload');
 
@@ -17,25 +18,19 @@
             $dispatch->dispatch();
         }
 
-        static public function autoload($class){
-//            var_dump($class);
-            $temp = explode('\\', $class);
+        static public function autoload($class)
+        {
+            $className = $class;
+            $temp = explode('\\', $className);
             if($temp[0] == 'Xiao'){
-                $className = preg_replace('/^Xiao\\\/', '', $class);
-                require_once(XIAO_PATH.$className.EXT);
-            }else{
-//                var_dump($class);exit;
-                var_dump(456);
-                $className = preg_replace('/^Xiao\\\/', '', $class);
-                var_dump(123);
-                var_dump($className);exit;
-                $className = 'D:\xampp\htdocs\test\xiaodemo\application\demo\controller'.DIRECTORY_SEPARATOR.$className;
-                var_dump($className);
-//                var_dump(__DIR__.'/../../../application/demo/'.$className.EXT);
-//                exit;
-                require_once($className.EXT);
+                $className = preg_replace('/^Xiao\\\/', '', $className);
             }
 
+            if(file_exists(XIAO_PATH.$className.EXT)){
+                require_once(XIAO_PATH.$className.EXT);
+            }elseif(file_exists(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.$className.EXT)){
+                require_once(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.$className.EXT);
+            }
 
         }
 
