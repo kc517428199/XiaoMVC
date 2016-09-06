@@ -28,8 +28,14 @@
 
             if(file_exists(XIAO_PATH.$className.EXT)){
                 require_once(XIAO_PATH.$className.EXT);
-            }elseif(file_exists(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.$className.EXT)){
-                require_once(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.'controller'.DIRECTORY_SEPARATOR.$className.EXT);
+            }else{
+                $fileDir = array('controller', 'model', 'view');
+                foreach ($fileDir as $key=>$value){
+                    if(file_exists(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.$value.DIRECTORY_SEPARATOR.$className.EXT)) {
+                        require_once(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.$value.DIRECTORY_SEPARATOR.$className.EXT);
+                        break;
+                    }
+                }
             }
 
         }

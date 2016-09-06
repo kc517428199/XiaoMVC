@@ -8,8 +8,8 @@ namespace Xiao;
 class Dispatcher
 {
 
-    private static $controllerName;
-    private static $methodName;
+    private static $controllerName = 'index';
+    private static $methodName = 'index';
     private static $paramsArray = array();
 
     static public function dispatch()
@@ -28,16 +28,23 @@ class Dispatcher
                 $i++;
             }
             if ($value == APP_NAME) {
-                self::$controllerName = 'Xiao\\' . ucfirst($path[$i + 1]) . 'Controller';
-                self::$methodName = $path[$i + 2];
+                if(isset($path[$i + 1]) && !empty($path[$i + 1])){
+                    self::$controllerName = 'Xiao\\' . ucfirst($path[$i + 1]) . 'Controller';
+                }
+                if(isset($path[$i + 2]) && !empty($path[$i + 2])){
+                    self::$methodName = $path[$i + 2];
+                }
                 $i += 2;
             }
             $i++;
         }
 
+        self::_paramsProcess();
+
 //        var_dump(self::$controllerName);
+        $methodName = self::getMethodName();
         $controllerInstance = new self::$controllerName();
-        $controllerInstance->index();
+        $controllerInstance->$methodName();
 
     }
 
@@ -56,4 +63,14 @@ class Dispatcher
         return self::$paramsArray;
     }
 
+    //get参数处理
+    private function _paramsProcess()
+    {
+        if(empty(self::$paramsArray)){
+            return;
+        }
+        foreach (self::$paramsArray as $key=>$value){
+            $_GET[$key] = $value;
+        }
+    }
 }
