@@ -18,21 +18,36 @@
         }
 
         static public function autoload($class){
+//            var_dump($class);
+            $temp = explode('\\', $class);
+            if($temp[0] == 'Xiao'){
+                $className = preg_replace('/^Xiao\\\/', '', $class);
+                require_once(XIAO_PATH.$className.EXT);
+            }else{
+//                var_dump($class);exit;
+                var_dump(456);
+                $className = preg_replace('/^Xiao\\\/', '', $class);
+                var_dump(123);
+                var_dump($className);exit;
+                $className = 'D:\xampp\htdocs\test\xiaodemo\application\demo\controller'.DIRECTORY_SEPARATOR.$className;
+                var_dump($className);
+//                var_dump(__DIR__.'/../../../application/demo/'.$className.EXT);
+//                exit;
+                require_once($className.EXT);
+            }
 
-            $className = preg_replace('/^Xiao\\\/', '', $class);
-            require_once(XIAO_PATH.$className.EXT);
 
         }
 
         static public function fatalError(){
-            var_dump('close');
+//            var_dump('close');
         }
 
         static public function appError($errno, $errstr, $errfile, $errline){
-            var_dump($errno, $errstr, $errfile, $errline);
+//            var_dump($errno, $errstr, $errfile, $errline);
         }
 
         static public function appException($e){
-            var_dump($e);
+//            var_dump($e);
         }
     }

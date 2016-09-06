@@ -26,14 +26,20 @@ class Dispatcher {
                 $i++;
             }
             if($value == APP_NAME){
-                self::$controllerName = $path[$i+1];
+//                self::$controllerName = '\\Xiao\\'.ucfirst($path[$i+1]).'Controller';
+                self::$controllerName = 'Xiao\\'.ucfirst($path[$i+1]).'Controller';
                 self::$methodName = $path[$i+2];
                 $i += 2;
             }
             $i++;
         }
 
-        var_dump(self::$paramsArray);
+//        var_dump(self::$controllerName);
+        $controllerInstance = new self::$controllerName();
+        $controllerInstance->index();
+
+        
+//        var_dump($controllerInstance);
 
 //        var_dump($_SERVER['PATH_INFO']);
     }
