@@ -1,9 +1,8 @@
 <?php
-
     namespace Xiao;
 
     /**
-     * Core类
+     * Request类
      *
      * @author  xiaokc
      */
@@ -73,7 +72,7 @@
         // 当前请求的url
         public static function url()
         {
-            
+
         }
 
         public function __set($key, $value)
