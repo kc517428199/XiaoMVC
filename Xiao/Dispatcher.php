@@ -45,7 +45,8 @@
     //        var_dump(self::$controllerName);
             $methodName = self::getMethodName();
             $controllerInstance = new self::$controllerName();
-            $controllerInstance->$methodName();
+            call_user_func_array(array($controllerInstance, $methodName), self::getParamsArray());
+//            $controllerInstance->$methodName();
 
         }
 

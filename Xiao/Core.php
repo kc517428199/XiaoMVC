@@ -34,8 +34,8 @@
             }else{
                 $fileDir = array('controller', 'model', 'view');
                 foreach ($fileDir as $key=>$value){
-                    if(file_exists(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.$value.DIRECTORY_SEPARATOR.$className.EXT)) {
-                        require_once(APP_PATH.'..'.DIRECTORY_SEPARATOR.'application'.DIRECTORY_SEPARATOR.APP_NAME.DIRECTORY_SEPARATOR.$value.DIRECTORY_SEPARATOR.$className.EXT);
+                    if(file_exists(APP_PATH.$value.DIRECTORY_SEPARATOR.$className.EXT)) {
+                        require_once(APP_PATH.$value.DIRECTORY_SEPARATOR.$className.EXT);
                         break;
                     }
                 }
@@ -43,15 +43,23 @@
 
         }
 
-        static public function fatalError(){
+        static public function fatalError()
+        {
 //            var_dump('close');
         }
 
-        static public function appError($errno, $errstr, $errfile, $errline){
+        static public function appError($errno, $errstr, $errfile, $errline)
+        {
 //            var_dump($errno, $errstr, $errfile, $errline);
+            $err = 'errno:'.$errno.', errstr:'.$errstr.', errfile:'.$errfile.', errline:'.$errline;
+            $logSystem = new \Xiao\Log('system', __FILE__, $err);
+            $logSystem->log();
         }
 
-        static public function appException($e){
-//            var_dump($e);
+        static public function appException($e)
+        {
+            var_dump($e);
+            $logSystem = new \Xiao\Log('system', __FILE__, json_decode($e));
+            $logSystem->log();
         }
     }

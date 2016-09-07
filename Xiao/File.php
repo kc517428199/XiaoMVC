@@ -65,7 +65,7 @@
 
         /**
          * 创建多级目录
-         * 
+         *
          * @access public
          * @param string $dir 目录路径
          * @param string $mode 权限
@@ -77,5 +77,19 @@
             if (is_dir($dir) || @mkdir($dir, $mode)) return true;
             if (!$this->mkdirs(dirname($dir), $mode)) return false;
             return @mkdir($dir, $mode);
+        }
+
+        /**
+         * 删除文件
+         *
+         * @access public
+         * @return bool
+         * @author xiaokc
+         */
+        public function delete(){
+            if(!unlink($this->filePath)) {
+                return false;
+            }
+            return true;
         }
     }
