@@ -7,7 +7,7 @@
      * @author  xiaokc
      */
     class Log {
-        public $logDirPath = APP_PATH.DIRECTORY_SEPARATOR.'log'.DIRECTORY_SEPARATOR;
+        public $logDirPath;
         public $logName;
         public $filePath;
         public $content;
@@ -17,6 +17,7 @@
 
         public function __construct($logName, $filePath, $content)
         {
+            $this->logDirPath = APP_PATH.'log'.DIRECTORY_SEPARATOR;
             $this->logName = $logName;
             $this->filePath = $filePath;
             $this->content = $content;

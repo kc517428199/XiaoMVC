@@ -52,7 +52,7 @@
         {
 //            var_dump($errno, $errstr, $errfile, $errline);
             $err = 'errno:'.$errno.', errstr:'.$errstr.', errfile:'.$errfile.', errline:'.$errline;
-            $logSystem = new \Xiao\Log('system', __FILE__, $err);
+            $logSystem = new Log('system', __FILE__, $err);
             $logSystem->log();
         }
 

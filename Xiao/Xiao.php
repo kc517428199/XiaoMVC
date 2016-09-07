@@ -7,6 +7,11 @@ defined('EXT') or define('EXT', '.php');
 defined('DEFAULT_TIMEZONE') or define('DEFAULT_TIMEZONE', 'PRC');
 defined('DEBUG') or define('DEBUG', false);
 
+define('DB_NAME', 'game');
+define('DB_USER', 'root');
+define('DB_PASSWORD', '');
+define('DB_HOST', 'localhost');
+
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
 //    var_dump(XIAO_PATH);
