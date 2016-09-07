@@ -1,9 +1,12 @@
 <?php
     namespace Xiao;
 
+    /**
+     * Core类
+     *
+     * @author  xiaokc
+     */
     class Core {
-//    require_once ('../vendor/xiaokc/xiaomvc/Xiao/Dispatcher.php');
-
         static public function start()
         {
             // 注册AUTOLOAD方法
