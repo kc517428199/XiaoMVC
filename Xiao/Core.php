@@ -15,7 +15,7 @@
             // 设定错误和异常处理
             register_shutdown_function('Xiao\Core::fatalError');
             set_error_handler('Xiao\Core::appError');
-            set_exception_handler('Xiao\Core::appException');
+//            set_exception_handler('Xiao\Core::appException');
 
             $dispatch = new Dispatcher;
             $dispatch->dispatch();
@@ -52,7 +52,7 @@
         {
 //            var_dump($errno, $errstr, $errfile, $errline);
             $err = 'errno:'.$errno.', errstr:'.$errstr.', errfile:'.$errfile.', errline:'.$errline;
-            $logSystem = new \Xiao\Log('system', __FILE__, $err);
+            $logSystem = new Log('system', __FILE__, $err);
             $logSystem->log();
         }
 
