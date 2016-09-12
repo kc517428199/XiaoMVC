@@ -45,7 +45,7 @@
          * @return string 返回写入字符数
          * @author xiaokc
          */
-        public function write($text, $mode = 'w')
+        public function write($text, $mode = 'a')
         {
             if(!is_dir(dirname($this->filePath)) && !$this->mkdirs(dirname($this->filePath))){
                 return false;

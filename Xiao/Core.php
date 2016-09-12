@@ -13,9 +13,12 @@
             spl_autoload_register('Xiao\Core::autoload');
 
             // 设定错误和异常处理
-            register_shutdown_function('Xiao\Core::fatalError');
+            register_shutdown_function('Xiao\Core::shutdown');
             set_error_handler('Xiao\Core::appError');
-//            set_exception_handler('Xiao\Core::appException');
+            set_exception_handler('Xiao\Core::appException');
+
+            @session_save_path(APP_SESSION);
+            @session_start();
 
             $dispatch = new Dispatcher;
             $dispatch->dispatch();
@@ -43,23 +46,20 @@
 
         }
 
-        static public function fatalError()
+        static public function shutdown()
         {
 //            var_dump('close');
         }
 
         static public function appError($errno, $errstr, $errfile, $errline)
         {
-//            var_dump($errno, $errstr, $errfile, $errline);
             $err = 'errno:'.$errno.', errstr:'.$errstr.', errfile:'.$errfile.', errline:'.$errline;
-            $logSystem = new Log('system', __FILE__, $err);
-            $logSystem->log();
+            Log::errorLog($err, __FILE__);
         }
 
         static public function appException($e)
         {
-            var_dump($e);
-            $logSystem = new \Xiao\Log('system', __FILE__, json_decode($e));
-            $logSystem->log();
+//            var_dump($e);
+            Log::log('exception', json_decode($e), __FILE__, 'exception');
         }
     }

@@ -9,44 +9,60 @@
      */
     class Dispatcher
     {
-        private static $controllerName = 'Xiao\\IndexController';
-        private static $methodName = 'index';
-        private static $paramsArray = array();
+        static private $controllerName = 'IndexController';
+        static private $methodName = 'index';
+        static private $paramsArray = array();
 
         static public function dispatch()
         {
-    //        var_dump($_SERVER['REQUEST_URI']);
-            $path = explode('/', $_SERVER['REQUEST_URI']);
-
-            $i = 0;
-            foreach ($path as $key => $value) {
-                if ($i != 0 && $key != 0 && (!isset($path[$i]) || empty($path[$i]))) {
+            switch (DISPATCH_TYPE) {
+                case '0':
+                    isset($_GET['c'])&&self::$controllerName = self::_controllerProcess($_GET['c']) . 'Controller';
+                    isset($_GET['m'])&&self::$methodName = $_GET['m'];
                     break;
-                }
+                case '1':
+                    //根域名识别
+                    $isUrlRoot = true;
+                    if(preg_match("/\/".APP_NAME."\//", urldecode($_SERVER['SCRIPT_NAME']))) {
+                        $isUrlRoot = false;
+                    }
 
-                if ($key != $i) {
-                    self::$paramsArray[$path[$i]] = $path[$i + 1];
-                    $i++;
-                }
-                if ($value == APP_NAME) {
-                    if(isset($path[$i + 1]) && !empty($path[$i + 1])){
-                        self::$controllerName = 'Xiao\\' . ucfirst($path[$i + 1]) . 'Controller';
+                    $path = explode('/', urldecode($_SERVER['REQUEST_URI']));
+
+                    $i = 0;
+                    foreach ($path as $key => $value) {
+                        if ($i != 0 && $key != 0 && (!isset($path[$i]) || empty($path[$i]))) {
+                            break;
+                        }
+
+                        //参数
+                        if ($key != $i) {
+                            self::$paramsArray[$path[$i]] = $path[$i + 1];
+                            $i++;
+                        }
+                        // controller method
+                        if ($value == APP_NAME || $isUrlRoot === true) {
+                            if (isset($path[$i + 1]) && !empty($path[$i + 1])) {
+                                self::$controllerName = self::_controllerProcess($path[$i + 1]) . 'Controller';
+                            }
+                            if (isset($path[$i + 2]) && !empty($path[$i + 2])) {
+                                self::$methodName = $path[$i + 2];
+                            }
+                            $i += 2;
+                            //关闭一级识别
+                            $isUrlRoot = false;
+                        }
+                        $i++;
                     }
-                    if(isset($path[$i + 2]) && !empty($path[$i + 2])){
-                        self::$methodName = $path[$i + 2];
-                    }
-                    $i += 2;
-                }
-                $i++;
+                    self::_paramsProcess(); //get参数处理
+                    break;
             }
 
-            self::_paramsProcess();
 
-    //        var_dump(self::$controllerName);
+//            var_dump(self::$controllerName);
             $methodName = self::getMethodName();
             $controllerInstance = new self::$controllerName();
             call_user_func_array(array($controllerInstance, $methodName), self::getParamsArray());
-//            $controllerInstance->$methodName();
 
         }
 
@@ -74,5 +90,10 @@
             foreach (self::$paramsArray as $key=>$value){
                 $_GET[$key] = $value;
             }
+        }
+
+        private function _controllerProcess($name)
+        {
+            return preg_replace(array("/^([a-z])/e", "/(-)([a-z])/e"), array("strtoupper('$1')", "strtoupper('\$2')"), $name);
         }
     }

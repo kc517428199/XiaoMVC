@@ -7,22 +7,12 @@
      * @author  xiaokc
      */
     class Log {
-        public $logDirPath;
-        public $logName;
-        public $filePath;
-        public $content;
-        public $log;
+//        public $log;
+        static private $_ext = '.log';
 
-        private $_ext = '.log';
-
-        public function __construct($logName, $filePath, $content)
+        public function __construct()
         {
-            $this->logDirPath = APP_PATH.'log'.DIRECTORY_SEPARATOR;
-            $this->logName = $logName;
-            $this->filePath = $filePath;
-            $this->content = $content;
 
-            $this->log = new \Xiao\File($this->logDirPath.$this->logName.$this->_ext);
         }
 
         /**
@@ -33,9 +23,17 @@
          * @return bool
          * @author xiaokc
          */
-        private function _writeLog($content)
+        static private function _writeLog($type, $content, $path, $file = 'log')
         {
-            return $this->log->write(json_encode($content)."\n", 'a');
+            $text = array(
+                'type' => $type ,
+                'datetime' => date("Y-m-d H:i:s") ,
+                'content' => $content ,
+                'path' => $path
+            );
+
+            $log = new \Xiao\File(APP_LOG . $file . self::$_ext);
+            return $log->write(json_encode($text)."\n", 'a');
         }
 
         /**
@@ -45,15 +43,16 @@
          * @return bool
          * @author xiaokc
          */
-        public function log()
+        static public function log($type, $content, $path = null, $file = 'log')
         {
-            $content = array(
-                'file' => $this->logName ,
-                'datetime' => time() ,
-                'content' => $this->content ,
-                'filepath' => $this->filePath
-            );
-            return $this->_writeLog($content);
+            is_null($path)&&$path = debug_backtrace()[0]['file'];
+            return self::_writeLog($type, $content, $path, $file);
+        }
+
+        static public function errorLog($content, $path = null)
+        {
+            is_null($path)&&$path = debug_backtrace()[0]['file'];
+            return self::_writeLog('error', $content, $path, 'error');
         }
 
     }

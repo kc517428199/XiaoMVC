@@ -11,14 +11,10 @@
         protected $variables = array();
         protected $_controller;
 
-        public function __construct($controller)
+        public function __construct()
         {
+            $controller = strtolower(preg_replace("/Controller/", '', Dispatcher::getControllerName()));
             $this->_controller = $controller;
-        }
-
-        public function __destruct()
-        {
-
         }
 
         public function assign($name, $value)
@@ -30,7 +26,7 @@
         {
             extract($this->variables);
 
-            $file_view = APP_PATH.'view'.DIRECTORY_SEPARATOR.$this->_controller.DIRECTORY_SEPARATOR.$url.EXT;
+            $file_view = APP_VIEW . $this->_controller.DIRECTORY_SEPARATOR.$url.EXT;
             if(file_exists($file_view)) {
                 include $file_view;
             } else {
