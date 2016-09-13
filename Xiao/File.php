@@ -60,6 +60,7 @@
             $number = fwrite($file, $text);
             flock($file, LOCK_UN);
             fclose($file);
+            @clearstatcache(true, $this->filePath);
             return $number;
         }
 
@@ -87,9 +88,7 @@
          * @author xiaokc
          */
         public function delete(){
-            if(!unlink($this->filePath)) {
-                return false;
-            }
-            return true;
+            if(!file_exists($this->filePath)) return true;
+            return !unlink($this->filePath) ? false : true;
         }
     }
