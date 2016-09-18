@@ -15,6 +15,51 @@
 
         static public function dispatch()
         {
+            if(php_sapi_name() == 'cli') {
+                self::_routeCli();
+            } else {
+                self::_route();
+            }
+
+            $methodName = self::getMethodName();
+            $controllerInstance = new self::$controllerName();
+            call_user_func_array(array($controllerInstance, $methodName), self::getParamsArray());
+
+        }
+
+        static public function getControllerName()
+        {
+            return self::$controllerName;
+        }
+
+        static public function getMethodName()
+        {
+            return self::$methodName;
+        }
+
+        static public function getParamsArray()
+        {
+            return self::$paramsArray;
+        }
+
+        //get参数处理
+        private function _paramsProcess()
+        {
+            if(empty(self::$paramsArray)){
+                return;
+            }
+            foreach (self::$paramsArray as $key=>$value){
+                $_GET[$key] = $value;
+            }
+        }
+
+        private function _controllerProcess($name)
+        {
+            return preg_replace(array("/^([a-z])/e", "/(-)([a-z])/e"), array("strtoupper('$1')", "strtoupper('\$2')"), $name);
+        }
+
+        static private function _route()
+        {
             switch (DISPATCH_TYPE) {
                 case '0':
                     isset($_GET['c'])&&self::$controllerName = self::_controllerProcess($_GET['c']) . 'Controller';
@@ -58,42 +103,23 @@
                     break;
             }
 
-
-//            var_dump(self::$controllerName);
-            $methodName = self::getMethodName();
-            $controllerInstance = new self::$controllerName();
-            call_user_func_array(array($controllerInstance, $methodName), self::getParamsArray());
-
         }
 
-        static public function getControllerName()
+        static private function _routeCli()
         {
-            return self::$controllerName;
-        }
+            global $argv;
+            unset($argv[0]);
 
-        static public function getMethodName()
-        {
-            return self::$methodName;
-        }
-
-        static public function getParamsArray()
-        {
-            return self::$paramsArray;
-        }
-
-        //get参数处理
-        private function _paramsProcess()
-        {
-            if(empty(self::$paramsArray)){
-                return;
+            if(isset($argv[1])) {
+                self::$controllerName = self::_controllerProcess($argv[1]) . 'Controller';;
+                unset($argv[1]);
             }
-            foreach (self::$paramsArray as $key=>$value){
-                $_GET[$key] = $value;
+            if(isset($argv[2])) {
+                self::$methodName = $argv[2];
+                unset($argv[2]);
             }
-        }
-
-        private function _controllerProcess($name)
-        {
-            return preg_replace(array("/^([a-z])/e", "/(-)([a-z])/e"), array("strtoupper('$1')", "strtoupper('\$2')"), $name);
+            if(isset($argv[3])) {
+                self::$paramsArray = $argv;
+            }
         }
     }

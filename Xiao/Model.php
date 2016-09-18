@@ -1,6 +1,5 @@
 <?php
     namespace Xiao;
-    use Xiao;
 
     /**
      * Model类
@@ -17,8 +16,11 @@
         private $selectSql = 'SELECT %FIELD% FROM %TABLE% %JOIN% %WHERE% %GROUP% %HAVING% %ORDER% %LIMIT%';
 
 
-        public function __construct($data)
+        public function __construct($data = array())
         {
+            if(empty($data)) {
+                $data = \Xiao\Config::config()->database;
+            }
             $this->_dataInfo = $data;
             $this->loadDatabase();
         }
@@ -159,7 +161,17 @@
 
         public function getTableName()
         {
-            return isset($this->options['table'][0]) ? '`' . (string)$this->options['table'][0] . '`' : '`' . $this->_dataInfo['table'] . '`';
+            if(!isset($this->options['table'][0])) {
+                $name = get_class($this);
+                if ($pos = strrpos($name, '\\')) { //有命名空间
+                    $table = '`' . $this->_dataInfo['prefix'] . str_replace('Model', '', substr($name, $pos + 1)) . '`';
+                } else {
+                    $table = '`' . $this->_dataInfo['prefix'] . $name . '`';
+                }
+            } else {
+                $table = '`' . $this->_dataInfo['prefix'] . (string)$this->options['table'][0] . '`';
+            }
+            return strtolower($table);
         }
 
 
