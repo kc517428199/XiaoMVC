@@ -24,7 +24,7 @@
             $this->_dataInfo = $data;
             $this->loadDatabase();
         }
-        
+
         public function __call($name, $arguments)
         {
             if(in_array($name, $this->methods)) {
@@ -39,10 +39,17 @@
 
         public function loadDataBase()
         {
-            //pdo driver_options暂不考虑
-            $this->db = new \PDO($this->_dataInfo['dns'], $this->_dataInfo['username'], $this->_dataInfo['password'], array());
-            //未知 抛出错误和异常
-            $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            try {
+                //pdo driver_options暂不考虑
+//            $this->db = new \PDO($this->_dataInfo['dns'], $this->_dataInfo['username'], $this->_dataInfo['password'], array());
+                self::$db = new \PDO($this->_dataInfo['dns'], $this->_dataInfo['username'], $this->_dataInfo['password'], array());
+                //未知 抛出错误和异常
+//            $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+                self::$db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $e) {
+                echo "error".$e->getMessage()."</br>";
+                exit;
+            }
         }
 
         public function find()
@@ -89,7 +96,9 @@
                     array($select_field, $this->getTableName(), $select_where, $select_join, $select_group, $select_having, $select_order, $select_limit),
                     $this->selectSql);
             try {
-                foreach ($this->db->query($sql) as $row) {
+                $this->options = null;
+//                foreach ($this->db->query($sql) as $row) {
+                foreach (self::$db->query($sql) as $row) {
                     $result[] = $row;
                 }
                 return $result;
@@ -108,7 +117,9 @@
             $value = array_values($data);
             $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", $this->getTableName(), implode(',', $columns), implode(',', $value));
             try {
-                return $this->db->exec($sql) ? $this->db->lastInsertId() : false;
+                $this->options = null;
+//                return $this->db->exec($sql) ? $this->db->lastInsertId() : false;
+                return self::$db->exec($sql) ? self::$db->lastInsertId() : false;
             }catch (\Exception $e) {
                 return false;
             }
@@ -132,7 +143,9 @@
 
             $sql = sprintf("UPDATE %s SET %s WHERE %s", $this->getTableName(), implode(',', $columns), implode(',', $v));
             try {
-                return $this->db->exec($sql);
+                $this->options = null;
+//                return $this->db->exec($sql);
+                return self::$db->exec($sql);
             }catch (\Exception $e) {
                 return false;
             }
@@ -153,7 +166,9 @@
 
             $sql = sprintf("DELETE FROM %s WHERE %s", $this->getTableName(), implode(',', $columns));
             try {
-                return $this->db->exec($sql);
+                $this->options = null;
+//                return $this->db->exec($sql);
+                return self::$db->exec($sql);
             }catch (\Exception $e) {
                 return false;
             }
@@ -164,10 +179,9 @@
             if(!isset($this->options['table'][0])) {
                 $name = get_class($this);
                 if ($pos = strrpos($name, '\\')) { //有命名空间
-                    $table = '`' . $this->_dataInfo['prefix'] . str_replace('Model', '', substr($name, $pos + 1)) . '`';
-                } else {
-                    $table = '`' . $this->_dataInfo['prefix'] . $name . '`';
+                    $name = substr($name, $pos + 1);
                 }
+                $table = '`' . $this->_dataInfo['prefix'] . str_replace('Model', '', $name) . '`';
             } else {
                 $table = '`' . $this->_dataInfo['prefix'] . (string)$this->options['table'][0] . '`';
             }

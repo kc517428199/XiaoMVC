@@ -13,12 +13,12 @@
         static private $methodName = 'index';
         static private $paramsArray = array();
 
-        static public function dispatch()
+        public function dispatch()
         {
             if(php_sapi_name() == 'cli') {
-                self::_routeCli();
+                $this->_routeCli();
             } else {
-                self::_route();
+                $this->_route();
             }
 
             $methodName = self::getMethodName();
@@ -58,7 +58,7 @@
             return preg_replace(array("/^([a-z])/e", "/(-)([a-z])/e"), array("strtoupper('$1')", "strtoupper('\$2')"), $name);
         }
 
-        static private function _route()
+        private function _route()
         {
             switch (DISPATCH_TYPE) {
                 case '0':
@@ -99,13 +99,14 @@
                         }
                         $i++;
                     }
-                    self::_paramsProcess(); //get参数处理
+//                    self::_paramsProcess(); //get参数处理
+                    $this->_paramsProcess();
                     break;
             }
 
         }
 
-        static private function _routeCli()
+        private function _routeCli()
         {
             global $argv;
             unset($argv[0]);
