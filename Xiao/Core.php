@@ -15,8 +15,12 @@
             // 设定错误和异常处理
             register_shutdown_function('Xiao\Core::shutdown');
             set_error_handler('Xiao\Core::appError');
-            set_exception_handler('Xiao\Core::appException');
+//            set_exception_handler('Xiao\Core::appException');
 
+            $session_dir = new File();
+            if(!is_dir(APP_SESSION) && !$session_dir->mkdirs(APP_SESSION)){
+                Log::errorLog('error session dir', __FILE__);
+            }
             @session_save_path(APP_SESSION);
             @session_start();
 
@@ -54,6 +58,7 @@
         static public function appError($errno, $errstr, $errfile, $errline)
         {
             $err = 'errno:'.$errno.', errstr:'.$errstr.', errfile:'.$errfile.', errline:'.$errline;
+//            echo $err,"\n";
             Log::errorLog($err, __FILE__);
         }
 

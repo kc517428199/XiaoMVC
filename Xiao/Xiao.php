@@ -24,6 +24,12 @@ define('DB_USER', 'root');
 define('DB_PASSWORD', '');
 define('DB_HOST', 'localhost');
 
+if(DEBUG) {
+    !ini_get('display_errors')&&ini_set('display_errors', 'On');
+} else {
+    ini_set('display_errors', 'Off');
+}
+
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
 

@@ -10,10 +10,12 @@
         public $fileName;
         public $filePath;
 
-        public function __construct($filePath)
+        public function __construct($filePath = null)
         {
-            $this->filePath = $filePath;
-            $this->fileName = basename($this->filePath);
+            if(!empty($filePath)) {
+                $this->filePath = $filePath;
+                $this->fileName = basename($this->filePath);
+            }
         }
 
         /**

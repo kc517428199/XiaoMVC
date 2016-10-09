@@ -55,7 +55,7 @@
 
         private function _controllerProcess($name)
         {
-            return preg_replace(array("/^([a-z])/e", "/(-)([a-z])/e"), array("strtoupper('$1')", "strtoupper('\$2')"), $name);
+            return preg_replace_callback(array("/^([a-z])/", "/(-)([a-z])/"), array($this,'_urlProcess'), $name);
         }
 
         private function _route()
@@ -122,5 +122,10 @@
             if(isset($argv[3])) {
                 self::$paramsArray = $argv;
             }
+        }
+
+        private function _urlProcess($url)
+        {
+            return isset($url[2]) ? strtoupper($url[2]) : strtoupper($url[0]);
         }
     }
